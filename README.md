@@ -1,4 +1,4 @@
-# SDHC (Sree Dhootapapeshwar Ayurvedic Raw Materials) Supplier Platform
+# SDHC Supplier Platform
 
 A full-stack web application for an Ayurvedic raw material supplier. Includes a beautiful, responsive frontend catalog and an administrative dashboard for securely managing products.
 
