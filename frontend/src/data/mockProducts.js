@@ -1,0 +1,72 @@
+export const mockProducts = [
+    {
+        _id: "1",
+        name: "Ashwagandha Root",
+        botanicalName: "Withania somnifera",
+        sanskritName: "Ashwagandha",
+        category: "Raw Herbs",
+        partUsed: "Roots",
+        forms: ["Raw", "Powder", "Extract"],
+        description: "A prominent herb in Ayurveda, known for its adaptogenic properties helping the body manage stress.",
+        uses: "Stress relief, strength building, immunity",
+        sizes: ["1kg", "5kg", "25kg", "50kg"],
+        bulkAvailability: true,
+        imageUrl: "https://images.unsplash.com/photo-1615486171448-4fd186414757?auto=format&fit=crop&q=80"
+    },
+    {
+        _id: "2",
+        name: "Amla",
+        botanicalName: "Phyllanthus emblica",
+        sanskritName: "Amalaki",
+        category: "Herbal Powders",
+        partUsed: "Fruit",
+        forms: ["Raw (Dried)", "Powder", "Extract"],
+        description: "Rich source of Vitamin C, traditionally used in Rasayana therapy for rejuvenation.",
+        uses: "Digestive health, hair care, immunity",
+        sizes: ["1kg", "10kg", "50kg"],
+        bulkAvailability: true,
+        imageUrl: "https://images.unsplash.com/photo-1596649890656-749e414c7dc9?auto=format&fit=crop&q=80"
+    },
+    {
+        _id: "3",
+        name: "Brahmi Map",
+        botanicalName: "Bacopa monnieri",
+        sanskritName: "Brahmi",
+        category: "Extracts",
+        partUsed: "Whole plant",
+        forms: ["Powder", "Extract", "Oil"],
+        description: "Revered in Ayurveda as a brain tonic for cognitive function and memory.",
+        uses: "Focus, memory enhancement, nervous system support",
+        sizes: ["500g", "1kg", "5kg"],
+        bulkAvailability: true,
+        imageUrl: "https://images.unsplash.com/photo-1608528577891-eb05feca37bf?auto=format&fit=crop&q=80"
+    },
+    {
+        _id: "4",
+        name: "Triphala Churna",
+        botanicalName: "Emblica officinalis, Terminalia chebula, Terminalia bellirica",
+        sanskritName: "Triphala",
+        category: "Herbal Powders",
+        partUsed: "Fruits",
+        forms: ["Powder"],
+        description: "A traditional blend of three fruits used for overall health and digestive balance.",
+        uses: "Detoxification, digestion, bowel regulation",
+        sizes: ["1kg", "5kg", "25kg"],
+        bulkAvailability: true,
+        imageUrl: "https://images.unsplash.com/photo-1596649890656-749e414c7dc9?auto=format&fit=crop&q=80"
+    },
+    {
+        _id: "5",
+        name: "Guggulu Resin",
+        botanicalName: "Commiphora mukul",
+        sanskritName: "Guggul",
+        category: "Oils & Resins",
+        partUsed: "Gum resin",
+        forms: ["Raw", "Extract"],
+        description: "A resinous sap highly valued for joint health and cholesterol management.",
+        uses: "Joint support, lipid metabolism",
+        sizes: ["1kg", "5kg", "10kg"],
+        bulkAvailability: true,
+        imageUrl: "https://images.unsplash.com/photo-1628189855581-2b0ea2a013d5?auto=format&fit=crop&q=80" // Note: placeholder
+    }
+];
