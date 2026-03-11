@@ -10,10 +10,37 @@ const BulkSupply = () => {
     const [formData, setFormData] = useState({ name: '', email: '', phone: '', company: '', products: '', quantity: '', message: '' });
     const [submitted, setSubmitted] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitted(true);
-        setTimeout(() => setSubmitted(false), 5000);
+        try {
+            const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const payload = {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone || "Not provided",
+                organization: formData.company,
+                materialRequired: formData.products,
+                quantity: formData.quantity || "Not specified",
+                message: formData.message
+            };
+
+            const res = await fetch(`${API_BASE}/inquiries`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                setSubmitted(true);
+                setFormData({ name: '', email: '', phone: '', company: '', products: '', quantity: '', message: '' });
+                setTimeout(() => setSubmitted(false), 5000);
+            } else {
+                alert('Failed to submit inquiry. Please try again.');
+            }
+        } catch (error) {
+            console.error('Submission error:', error);
+            alert('Network error. Please try again later.');
+        }
     };
 
     return (

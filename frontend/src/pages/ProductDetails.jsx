@@ -105,7 +105,7 @@ const ProductDetails = () => {
                                     <Link to="/bulk-supply" className="btn-primary w-full sm:w-auto shadow-colored-sage">
                                         Request Quote
                                     </Link>
-                                    <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-secondary w-full sm:w-auto">
+                                    <a href="https://wa.me/919376481607" target="_blank" rel="noopener noreferrer" className="btn-secondary w-full sm:w-auto">
                                         WhatsApp Us
                                     </a>
                                 </div>

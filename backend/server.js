@@ -18,6 +18,10 @@ app.use('/api/products', productRoutes);
 app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/admin', adminRoutes);
 
+const { errorHandler } = require('./middleware/errorHandler');
+// Error Handling Middleware
+app.use(errorHandler);
+
 // Database connection
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/ayurvedic_supplier';

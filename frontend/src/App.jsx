@@ -13,6 +13,11 @@ import Blog from './pages/Blog';
 import AdminDashboard from './pages/AdminDashboard';
 import StickyWhatsApp from './components/StickyWhatsApp';
 
+// New Imports for Admin Auth
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminLogin from './pages/AdminLogin';
+
 const Layout = ({ children }) => {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
@@ -31,21 +36,28 @@ const Layout = ({ children }) => {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/catalog" element={<Catalog />} />
-          <Route path="/product/:id" element={<ProductDetails />} />
-          <Route path="/bulk-supply" element={<BulkSupply />} />
-          <Route path="/quality" element={<Quality />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/catalog" element={<Catalog />} />
+            <Route path="/product/:id" element={<ProductDetails />} />
+            <Route path="/bulk-supply" element={<BulkSupply />} />
+            <Route path="/quality" element={<Quality />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/blog" element={<Blog />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Route>
+          </Routes>
+        </Layout>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

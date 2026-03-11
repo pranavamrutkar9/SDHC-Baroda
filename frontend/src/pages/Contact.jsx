@@ -11,10 +11,37 @@ const Contact = () => {
     const [submitted, setSubmitted] = useState(false);
     const [openFaq, setOpenFaq] = useState(null);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitted(true);
-        setTimeout(() => setSubmitted(false), 5000);
+        try {
+            const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const payload = {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone || "Not provided",
+                organization: "Contact Form",
+                materialRequired: formData.subject || "General Inquiry",
+                quantity: "Not specified",
+                message: formData.message
+            };
+
+            const res = await fetch(`${API_BASE}/inquiries`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                setSubmitted(true);
+                setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+                setTimeout(() => setSubmitted(false), 5000);
+            } else {
+                alert('Failed to submit message. Please try again.');
+            }
+        } catch (error) {
+            console.error('Submission error:', error);
+            alert('Network error. Please try again later.');
+        }
     };
 
     const faqs = [
