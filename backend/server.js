@@ -19,23 +19,40 @@ const app = express();
 // Security headers
 app.use(helmet());
 
-// Restricted CORS
+// ── CORS ──────────────────────────────────────────────────────────────────────
+// FRONTEND_URLS accepts a comma-separated list of allowed origins.
+// Example on Render: FRONTEND_URLS=https://sdhcbaroda.netlify.app
+// Multiple: FRONTEND_URLS=https://sdhcbaroda.netlify.app,https://www.sdhcbaroda.com
+const rawOrigins = process.env.FRONTEND_URLS || process.env.FRONTEND_URL || '';
+const productionOrigins = rawOrigins
+    .split(',')
+    .map(o => o.trim())
+    .filter(Boolean);
+
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:4173',
-    process.env.FRONTEND_URL
-].filter(Boolean);
+    ...productionOrigins,
+];
 
-app.use(cors({
+const corsOptions = {
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('CORS: Origin not allowed'));
-        }
+        // Allow requests with no origin (curl, Postman, server-to-server)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+        console.warn(`CORS blocked: ${origin}`);
+        callback(new Error(`CORS: Origin "${origin}" not allowed.`));
     },
-    credentials: true
-}));
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
+
+// Explicitly handle OPTIONS preflight for all routes
+app.options('*', cors(corsOptions));
+// ─────────────────────────────────────────────────────────────────────────────
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
