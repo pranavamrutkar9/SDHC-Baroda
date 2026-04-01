@@ -11,6 +11,8 @@ const productSchema = new mongoose.Schema({
     uses: { type: String },
     directionsForUse: { type: String },
     sizes: [{ type: String }],
+    price: { type: Number, default: 0 },          // Retail price in INR
+    stock: { type: Number, default: 100 },         // Available stock quantity
     bulkAvailability: { type: Boolean, default: true },
     images: [{
         url: { type: String },

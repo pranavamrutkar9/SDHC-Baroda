@@ -18,7 +18,7 @@ const AdminProducts = ({ authHeaders, showTempMessage }) => {
     const initialProductFormState = {
         name: '', botanicalName: '', sanskritName: '', category: 'Raw Herbs',
         partUsed: '', forms: [], description: '', uses: '', sizes: [], directionsForUse: '',
-        bulkAvailability: true, images: []
+        bulkAvailability: true, images: [], price: '', stock: 100
     };
     const [productFormData, setProductFormData] = useState(initialProductFormState);
 
@@ -130,6 +130,7 @@ const AdminProducts = ({ authHeaders, showTempMessage }) => {
                                     <tr className="border-b border-earth/10 bg-white/80">
                                         <th className="px-6 py-5 text-xs font-bold text-earth/50 uppercase tracking-widest">Product Details</th>
                                         <th className="px-6 py-5 text-xs font-bold text-earth/50 uppercase tracking-widest">Category</th>
+                                        <th className="px-6 py-5 text-xs font-bold text-earth/50 uppercase tracking-widest">Price</th>
                                         <th className="px-6 py-5 text-xs font-bold text-earth/50 uppercase tracking-widest">Status</th>
                                         <th className="px-6 py-5 text-xs font-bold text-earth/50 uppercase tracking-widest text-right">Actions</th>
                                     </tr>
@@ -150,6 +151,9 @@ const AdminProducts = ({ authHeaders, showTempMessage }) => {
                                             </td>
                                             <td className="px-6 py-5">
                                                 <span className="px-3 py-1 bg-cream rounded-xl text-xs font-bold text-earth/70 shadow-sm border border-earth/5">{product.category}</span>
+                                            </td>
+                                            <td className="px-6 py-5">
+                                                <span className="font-display font-bold text-earth">{product.price ? `₹${product.price}` : <span className="text-earth/30 italic text-xs">Not set</span>}</span>
                                             </td>
                                             <td className="px-6 py-5">
                                                 <span className={`inline-flex px-3 py-1 rounded-xl text-xs font-bold shadow-sm ${product.bulkAvailability ? 'bg-teal/10 text-teal border border-teal/20' : 'bg-red-50 text-red-500 border border-red-200'}`}>
@@ -189,6 +193,16 @@ const AdminProducts = ({ authHeaders, showTempMessage }) => {
                                     <option value="Extracts">Extracts</option>
                                     <option value="Oils & Resins">Oils & Resins</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-xs font-bold text-earth/60 uppercase tracking-widest mb-2">Price (₹) *</label>
+                                <input type="number" min="0" step="0.01" className="w-full px-4 py-3 bg-white/50 border border-earth/10 rounded-xl text-earth focus:border-saffron shadow-sm" required value={productFormData.price} onChange={e => setProductFormData({ ...productFormData, price: e.target.value })} placeholder="e.g. 299" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-earth/60 uppercase tracking-widest mb-2">Stock Quantity</label>
+                                <input type="number" min="0" className="w-full px-4 py-3 bg-white/50 border border-earth/10 rounded-xl text-earth focus:border-saffron shadow-sm" value={productFormData.stock} onChange={e => setProductFormData({ ...productFormData, stock: e.target.value })} placeholder="100" />
                             </div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

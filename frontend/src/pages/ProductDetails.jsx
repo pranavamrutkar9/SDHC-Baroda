@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Factory, FlaskConical, Scale, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Factory, FlaskConical, Scale, ShieldCheck, ShoppingCart, Plus, Minus } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 const ProductDetails = () => {
     const { id } = useParams();
+    const { addToCart } = useCart();
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState(0);
+    const [selectedSize, setSelectedSize] = useState('');
+    const [qty, setQty] = useState(1);
+    const [cartMsg, setCartMsg] = useState('');
 
     const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -16,6 +21,10 @@ const ProductDetails = () => {
         window.scrollTo(0, 0);
         fetchProduct();
     }, [id]);
+
+    useEffect(() => {
+        if (product?.sizes?.length > 0) setSelectedSize(product.sizes[0]);
+    }, [product]);
 
     const fetchProduct = async () => {
         try {
@@ -89,9 +98,65 @@ const ProductDetails = () => {
                         <div className="mb-8">
                             <div className="text-saffron text-sm font-bold tracking-widest uppercase mb-3">{product.category}</div>
                             <h1 className="heading-lg mb-2 text-earth">{product.name}</h1>
-                            <p className="font-display text-2xl text-earth/50 italic mb-8">{product.botanicalName}</p>
+                            <p className="font-display text-2xl text-earth/50 italic mb-4">{product.botanicalName}</p>
 
-                            <p className="subtitle mb-10">{product.description}</p>
+                            {/* Price Display */}
+                            {product.price > 0 ? (
+                                <div className="inline-flex items-baseline gap-2 mb-6">
+                                    <span className="font-display text-4xl font-bold text-earth">₹{product.price}</span>
+                                    <span className="text-earth/40 text-sm font-medium">per unit</span>
+                                </div>
+                            ) : (
+                                <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-amber-50 rounded-2xl border border-amber-100">
+                                    <span className="text-amber-700 text-sm font-semibold">Price on request — contact us for a quote</span>
+                                </div>
+                            )}
+
+                            <p className="subtitle mb-8">{product.description}</p>
+
+                            {/* Size Selector */}
+                            {product.sizes?.length > 0 && (
+                                <div className="mb-6">
+                                    <p className="text-xs font-bold text-earth/50 uppercase tracking-widest mb-3">Select Size</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {product.sizes.map(size => (
+                                            <button key={size} onClick={() => setSelectedSize(size)}
+                                                className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${selectedSize === size ? 'border-saffron bg-saffron/10 text-saffron' : 'border-earth/10 text-earth/60 hover:border-earth/30 bg-white/60'}`}>
+                                                {size}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Qty + Add to Cart */}
+                            {product.price > 0 && (
+                                <div className="flex items-center gap-4 mb-8">
+                                    <div className="flex items-center gap-1 bg-white/70 rounded-full border border-white/80 shadow-sm overflow-hidden">
+                                        <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-10 h-10 flex items-center justify-center text-earth/60 hover:text-earth hover:bg-earth/5 transition-colors">
+                                            <Minus size={14} />
+                                        </button>
+                                        <span className="w-10 text-center font-bold text-earth">{qty}</span>
+                                        <button onClick={() => setQty(q => q + 1)} className="w-10 h-10 flex items-center justify-center text-earth/60 hover:text-earth hover:bg-earth/5 transition-colors">
+                                            <Plus size={14} />
+                                        </button>
+                                    </div>
+                                    <button id="add-to-cart-btn"
+                                        onClick={() => {
+                                            addToCart(product, qty, selectedSize);
+                                            setCartMsg('Added to cart!');
+                                            setTimeout(() => setCartMsg(''), 2500);
+                                        }}
+                                        className="btn-primary flex-1 sm:flex-none justify-center">
+                                        <ShoppingCart size={18} /> Add to Cart
+                                    </button>
+                                </div>
+                            )}
+                            {cartMsg && (
+                                <div className="mb-4 px-4 py-3 bg-teal/10 border border-teal/20 rounded-2xl text-teal text-sm font-bold flex items-center gap-2">
+                                    <CheckCircle2 size={16} /> {cartMsg}
+                                </div>
+                            )}
                         </div>
 
                         {/* Quick Specs Bento Grid */}

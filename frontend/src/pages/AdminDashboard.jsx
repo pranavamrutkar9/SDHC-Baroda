@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { LogOut, Users, Package, ClipboardList } from 'lucide-react';
+import { LogOut, Users, Package, ClipboardList, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 import AdminProducts from '../components/admin/AdminProducts';
 import AdminUsers from '../components/admin/AdminUsers';
 import AdminInquiries from '../components/admin/AdminInquiries';
+import AdminOrders from '../components/admin/AdminOrders';
 
 const AdminDashboard = () => {
     const { currentAdmin, logout } = useAuth();
-    const [activeTab, setActiveTab] = useState('products'); // 'products' | 'admins' | 'inquiries'
+    const [activeTab, setActiveTab] = useState('products'); // 'products' | 'admins' | 'inquiries' | 'orders'
 
     const navigate = useNavigate();
 
@@ -65,6 +66,9 @@ const AdminDashboard = () => {
                         <button onClick={() => handleTabChange('inquiries')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${activeTab === 'inquiries' ? 'bg-white text-saffron shadow-sm' : 'text-earth/60 hover:text-earth'}`}>
                             <div className="flex items-center gap-2"><ClipboardList size={16} /> Inquiries</div>
                         </button>
+                        <button onClick={() => handleTabChange('orders')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${activeTab === 'orders' ? 'bg-white text-saffron shadow-sm' : 'text-earth/60 hover:text-earth'}`}>
+                            <div className="flex items-center gap-2"><ShoppingBag size={16} /> Orders</div>
+                        </button>
                     </div>
 
                     <button onClick={handleLogoutClick} className="btn-secondary !py-2 !px-4 text-sm flex items-center gap-2">
@@ -81,6 +85,7 @@ const AdminDashboard = () => {
                 {activeTab === 'products' && <AdminProducts authHeaders={authHeaders} showTempMessage={showTempMessage} />}
                 {activeTab === 'admins' && <AdminUsers authHeaders={authHeaders} showTempMessage={showTempMessage} />}
                 {activeTab === 'inquiries' && <AdminInquiries authHeaders={authHeaders} showTempMessage={showTempMessage} />}
+                {activeTab === 'orders' && <AdminOrders authHeaders={authHeaders} showTempMessage={showTempMessage} />}
             </div>
         </div>
     );

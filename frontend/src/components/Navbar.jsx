@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, User, LogOut } from 'lucide-react';
+import CartIcon from './CartIcon';
+import { useUserAuth } from '../context/UserAuthContext';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
+    const { isLoggedIn, user, logout } = useUserAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -23,6 +27,11 @@ const Navbar = () => {
         { to: '/about', label: 'About' },
         { to: '/blog', label: 'Knowledge' },
     ];
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
 
     return (
         <div className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 transition-all duration-500 pt-4 pb-2">
@@ -59,20 +68,45 @@ const Navbar = () => {
                         ))}
                     </div>
 
-                    {/* CTA Contact */}
-                    <div className="hidden lg:block">
+                    {/* Desktop Right: Cart + Auth + Contact */}
+                    <div className="hidden lg:flex items-center gap-3">
+                        <CartIcon light={!scrolled} />
+
+                        {isLoggedIn ? (
+                            <div className="flex items-center gap-2">
+                                <Link to="/profile"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 backdrop-blur-md border border-white/60 text-earth font-semibold text-sm hover:bg-white/80 transition-all shadow-sm">
+                                    <User size={15} />
+                                    <span className="max-w-[100px] truncate">{user?.name?.split(' ')[0]}</span>
+                                </Link>
+                                <button onClick={handleLogout}
+                                    className="w-9 h-9 rounded-full bg-white/50 backdrop-blur-md border border-white/60 flex items-center justify-center text-earth/60 hover:text-red-500 hover:bg-white/80 transition-all shadow-sm"
+                                    title="Sign out">
+                                    <LogOut size={15} />
+                                </button>
+                            </div>
+                        ) : (
+                            <Link to="/login"
+                                className="px-5 py-2.5 rounded-full bg-white/50 backdrop-blur-md border border-white/60 text-earth font-semibold text-sm hover:bg-white/80 transition-all shadow-sm">
+                                Sign In
+                            </Link>
+                        )}
+
                         <Link to="/contact" className="btn-primary !py-2.5 !px-6 text-sm">
                             Contact Us
                         </Link>
                     </div>
 
-                    {/* Mobile Toggle */}
-                    <button
-                        onClick={() => setIsOpen(!isOpen)}
-                        className={`lg:hidden w-10 h-10 rounded-full flex items-center justify-center transition-all ${scrolled ? 'bg-white shadow-sm text-saffron' : 'bg-white/50 text-earth backdrop-blur-md'}`}
-                    >
-                        {isOpen ? <X size={20} /> : <Menu size={20} />}
-                    </button>
+                    {/* Mobile: Cart + Toggle */}
+                    <div className="lg:hidden flex items-center gap-2">
+                        <CartIcon light={!scrolled} />
+                        <button
+                            onClick={() => setIsOpen(!isOpen)}
+                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${scrolled ? 'bg-white shadow-sm text-saffron' : 'bg-white/50 text-earth backdrop-blur-md'}`}
+                        >
+                            {isOpen ? <X size={20} /> : <Menu size={20} />}
+                        </button>
+                    </div>
                 </div>
             </nav>
 
@@ -92,9 +126,26 @@ const Navbar = () => {
                             {link.label}
                         </Link>
                     ))}
-                    <Link to="/contact" className="btn-primary mt-4 w-full justify-center">
-                        Get In Touch
-                    </Link>
+
+                    <div className="border-t border-earth/5 mt-2 pt-4 flex flex-col gap-2">
+                        {isLoggedIn ? (
+                            <>
+                                <Link to="/profile" className="btn-secondary w-full justify-center flex items-center gap-2">
+                                    <User size={16} /> My Profile
+                                </Link>
+                                <button onClick={handleLogout} className="w-full text-center py-3 text-red-400 font-semibold text-sm hover:text-red-600 transition-colors">
+                                    Sign Out
+                                </button>
+                            </>
+                        ) : (
+                            <Link to="/login" className="btn-secondary w-full justify-center">
+                                Sign In
+                            </Link>
+                        )}
+                        <Link to="/contact" className="btn-primary mt-1 w-full justify-center">
+                            Get In Touch
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>

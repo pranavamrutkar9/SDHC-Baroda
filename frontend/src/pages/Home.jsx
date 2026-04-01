@@ -23,8 +23,8 @@ const Home = () => {
             <section className="relative min-h-screen pt-32 pb-20 flex flex-col justify-center overflow-hidden">
                 <div className="absolute inset-0 bg-mesh opacity-50 pointer-events-none" />
                 <div className="absolute top-20 left-10 w-72 h-72 bg-saffron/20 rounded-full mix-blend-multiply filter blur-[80px] animate-blob" />
-                <div className="absolute top-40 right-10 w-72 h-72 bg-teal/20 rounded-full mix-blend-multiply filter blur-[80px] animate-blob mix-blend-multiply animation-delay-2000" />
-                <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-gold/20 rounded-full mix-blend-multiply filter blur-[80px] animate-blob mix-blend-multiply animation-delay-4000" />
+                <div className="absolute top-40 right-10 w-72 h-72 bg-teal/20 rounded-full mix-blend-multiply filter blur-[80px] animate-blob animation-delay-2000" />
+                <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-gold/20 rounded-full mix-blend-multiply filter blur-[80px] animate-blob animation-delay-4000" />
 
                 <div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     {/* Left: Content */}
