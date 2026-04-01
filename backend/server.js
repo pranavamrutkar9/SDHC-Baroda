@@ -51,7 +51,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Explicitly handle OPTIONS preflight for all routes
-app.options('(.*)', cors(corsOptions)); // Express 5 requires (.*) not *
+app.options(/.*/, cors(corsOptions)); // regex bypasses path-to-regexp — works in Express 5
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Body parsing
