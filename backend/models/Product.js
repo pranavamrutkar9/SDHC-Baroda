@@ -9,9 +9,13 @@ const productSchema = new mongoose.Schema({
     forms: [{ type: String }], // raw, powder, extract
     description: { type: String },
     uses: { type: String },
+    directionsForUse: { type: String },
     sizes: [{ type: String }],
     bulkAvailability: { type: Boolean, default: true },
-    imageUrl: { type: String }
+    images: [{
+        url: { type: String },
+        public_id: { type: String }
+    }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);

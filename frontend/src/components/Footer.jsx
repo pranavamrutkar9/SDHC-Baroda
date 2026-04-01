@@ -51,10 +51,17 @@ const Footer = () => {
                     <div className="md:col-span-4 lg:col-span-2 lg:col-start-6">
                         <h4 className="font-display text-xl font-bold text-earth mb-6">Catalog</h4>
                         <ul className="space-y-4">
-                            {['Raw Herbs', 'Herbal Powders', 'Extracts', 'Oils & Resins'].map((item) => (
-                                <li key={item}>
-                                    <Link to={`/catalog?category=${item}`} className="text-earth/60 hover:text-saffron font-medium transition-all duration-300 hover:translate-x-2 inline-block">
-                                        {item}
+                            {[
+                                { label: 'Raw', query: 'Raw' },
+                                { label: 'Powder', query: 'Powder' },
+                                { label: 'Extract', query: 'Extract' },
+                                { label: 'Oil', query: 'Oil' },
+                                { label: 'Capsule', query: 'Capsule' },
+                                { label: 'Tablet', query: 'Tablet' },
+                            ].map((item) => (
+                                <li key={item.label}>
+                                    <Link to={`/catalog?form=${item.query}`} className="text-earth/60 hover:text-saffron font-medium transition-all duration-300 hover:translate-x-2 inline-block">
+                                        {item.label}
                                     </Link>
                                 </li>
                             ))}

@@ -1,29 +1,39 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, Factory, FlaskConical, Scale, ShieldCheck } from 'lucide-react';
 
 const ProductDetails = () => {
     const { id } = useParams();
 
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [activeImage, setActiveImage] = useState(0);
+
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
     useEffect(() => {
         document.title = "Product Details | SDHC";
         window.scrollTo(0, 0);
+        fetchProduct();
     }, [id]);
 
-    // Mock data
-    const product = {
-        name: 'Ashwagandha Root Powder',
-        botanicalName: 'Withania somnifera',
-        category: 'Herbal Powders',
-        description: 'Premium grade, finely milled Ashwagandha root powder sourced directly from the arid regions of Rajasthan. Known for its potent adaptogenic properties, this powder is processed under strict temperature controls to preserve withanolide content.',
-        origin: 'Rajasthan, India',
-        grade: 'Clinical Grade (Pharmaceutical)',
-        testing: ['Heavy Metals: Pass', 'Microbial: Pass', 'Aflatoxins: Absent', 'Identity: TLC/HPTLC Verified'],
-        certifications: ['GMP', 'ISO 9001:2015', 'FSSAI'],
-        packaging: ['25kg HDPE Drums', '10kg Vacuum Bags'],
-        minOrder: '25 kg',
-        img: 'https://images.unsplash.com/photo-1596649890656-749e414c7dc9?auto=format&fit=crop&q=80',
+    const fetchProduct = async () => {
+        try {
+            const res = await fetch(`${API_BASE}/products/${id}`);
+            if (res.ok) {
+                const data = await res.json();
+                setProduct(data);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     };
+
+    if (loading) return <div className="min-h-screen pt-28 pb-24 flex items-center justify-center text-earth">Loading...</div>;
+    if (!product) return <div className="min-h-screen pt-28 pb-24 flex items-center justify-center text-earth">Product not found.</div>;
+
 
     return (
         <div className="bg-cream min-h-screen pt-28 pb-24">
@@ -41,7 +51,11 @@ const ProductDetails = () => {
                         <div className="sticky top-32">
                             <div className="glass-panel p-2 shadow-soft-2xl border-white/80 rounded-[2.5rem] overflow-hidden group">
                                 <div className="relative h-[500px] rounded-[2rem] overflow-hidden">
-                                    <img src={product.img} alt={product.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                                    <img 
+                                        src={product.images && product.images.length > 0 ? product.images[activeImage].url : 'https://images.unsplash.com/photo-1596649890656-749e414c7dc9?auto=format&fit=crop&q=80'} 
+                                        alt={product.name} 
+                                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                                    />
                                     <div className="absolute inset-0 bg-gradient-to-t from-earth/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                                     {/* Badges on image */}
@@ -52,6 +66,21 @@ const ProductDetails = () => {
                                     </div>
                                 </div>
                             </div>
+                            
+                            {/* Thumbnails */}
+                            {product.images && product.images.length > 1 && (
+                                <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
+                                    {product.images.map((img, idx) => (
+                                        <button 
+                                            key={idx} 
+                                            onClick={() => setActiveImage(idx)}
+                                            className={`w-20 h-20 rounded-xl overflow-hidden shrink-0 border-2 transition-colors ${activeImage === idx ? 'border-saffron' : 'border-transparent hover:border-earth/20'}`}
+                                        >
+                                            <img src={img.url} alt={`${product.name} thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -68,8 +97,8 @@ const ProductDetails = () => {
                         {/* Quick Specs Bento Grid */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
                             {[
-                                { icon: Scale, label: 'Min. Order', value: product.minOrder },
-                                { icon: Factory, label: 'Origin', value: product.origin },
+                                { icon: Scale, label: 'Bulk', value: product.bulkAvailability ? 'Available' : 'N/A' },
+                                { icon: Factory, label: 'Origin', value: 'India' },
                                 { icon: ShieldCheck, label: 'Grade', value: 'Clinical' },
                                 { icon: FlaskConical, label: 'Tested', value: 'Yes' },
                             ].map((spec, i) => (
@@ -88,14 +117,23 @@ const ProductDetails = () => {
                                     <FlaskConical className="text-saffron" size={24} /> Quality & Testing
                                 </h3>
                                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {product.testing.map((test, i) => (
-                                        <li key={i} className="flex items-start gap-3">
-                                            <CheckCircle2 className="text-teal shrink-0 mt-0.5" size={18} />
-                                            <span className="text-earth/70 font-medium">{test}</span>
-                                        </li>
-                                    ))}
+                                    <li className="flex items-start gap-3">
+                                        <CheckCircle2 className="text-teal shrink-0 mt-0.5" size={18} />
+                                        <span className="text-earth/70 font-medium">GMP Certified Process</span>
+                                    </li>
+                                    <li className="flex items-start gap-3">
+                                        <CheckCircle2 className="text-teal shrink-0 mt-0.5" size={18} />
+                                        <span className="text-earth/70 font-medium">Quality Verified</span>
+                                    </li>
                                 </ul>
                             </div>
+
+                            {product.directionsForUse && (
+                                <div className="glass-card p-8">
+                                    <h3 className="font-display text-2xl font-bold text-earth mb-4">Directions for Use</h3>
+                                    <p className="text-earth/70 font-medium leading-relaxed">{product.directionsForUse}</p>
+                                </div>
+                            )}
 
                             <div className="glass-card p-8 bg-gradient-to-br from-white/80 to-saffron/5 border-saffron/20 shadow-colored-sage">
                                 <h3 className="font-display text-2xl font-bold text-earth mb-4">Request Bulk Quote</h3>

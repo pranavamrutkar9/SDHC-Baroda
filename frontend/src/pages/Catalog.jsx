@@ -4,35 +4,54 @@ import { Search, Filter, ArrowRight, Leaf, Info } from 'lucide-react';
 
 const Catalog = () => {
     const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const initialCategory = queryParams.get('category') || 'All';
 
-    const [activeCategory, setActiveCategory] = useState(initialCategory);
+    const [activeForm, setActiveForm] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
     useEffect(() => {
         document.title = "Catalog | SDHC";
         window.scrollTo(0, 0);
+        fetchProducts();
     }, []);
 
-    const categories = ['All', 'Raw Herbs', 'Herbal Powders', 'Extracts', 'Oils & Resins'];
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const formFromUrl = queryParams.get('form') || queryParams.get('category');
+        if (formFromUrl) {
+            setActiveForm(formFromUrl);
+        } else {
+            setActiveForm('All');
+        }
+    }, [location.search]);
 
-    // Placeholder data
-    const products = [
-        { id: 1, name: 'Ashwagandha Root', botanical: 'Withania somnifera', category: 'Raw Herbs', tags: ['High Demand'], img: 'https://images.unsplash.com/photo-1615486171448-4fd186414757?auto=format&fit=crop&q=80' },
-        { id: 2, name: 'Brahmi Leaves', botanical: 'Bacopa monnieri', category: 'Raw Herbs', tags: ['Wildcrafted'], img: 'https://images.unsplash.com/photo-1596649890656-749e414c7dc9?auto=format&fit=crop&q=80' },
-        { id: 3, name: 'Triphala Churna', botanical: 'Emblica, Terminalia', category: 'Herbal Powders', tags: ['Standardized'], img: 'https://images.unsplash.com/photo-1608528577891-eb05feca37bf?auto=format&fit=crop&q=80' },
-        { id: 4, name: 'Curcumin 95%', botanical: 'Curcuma longa', category: 'Extracts', tags: ['High Purity'], img: 'https://images.unsplash.com/photo-1628189855581-2b0ea2a013d5?auto=format&fit=crop&q=80' },
-        { id: 5, name: 'Neem Oil', botanical: 'Azadirachta indica', category: 'Oils & Resins', tags: ['Cold Pressed'], img: 'https://images.unsplash.com/photo-1615486171448-4fd186414757?auto=format&fit=crop&q=80' },
-        { id: 6, name: 'Shatavari Powder', botanical: 'Asparagus racemosus', category: 'Herbal Powders', tags: [], img: 'https://images.unsplash.com/photo-1596649890656-749e414c7dc9?auto=format&fit=crop&q=80' },
-        { id: 7, name: 'Guggulu Resin', botanical: 'Commiphora mukul', category: 'Oils & Resins', tags: ['Purified'], img: 'https://images.unsplash.com/photo-1608528577891-eb05feca37bf?auto=format&fit=crop&q=80' },
-        { id: 8, name: 'Tulsi Extract', botanical: 'Ocimum sanctum', category: 'Extracts', tags: ['Water Soluble'], img: 'https://images.unsplash.com/photo-1628189855581-2b0ea2a013d5?auto=format&fit=crop&q=80' },
-    ];
+    const fetchProducts = async () => {
+        try {
+            const res = await fetch(`${API_BASE}/products`);
+            if (res.ok) {
+                const data = await res.json();
+                setProducts(data);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const forms = ['All', 'Raw', 'Powder', 'Extract', 'Oil', 'Capsule', 'Tablet'];
 
     const filteredProducts = products.filter(p => {
-        const matchesCat = activeCategory === 'All' || p.category === activeCategory;
-        const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.botanical.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCat && matchesSearch;
+        const pForms = p.forms || [];
+        const matchesForm = activeForm === 'All' || pForms.includes(activeForm);
+        const name = p.name || '';
+        const botName = p.botanicalName || '';
+        const searchLower = searchQuery.toLowerCase();
+        const matchesSearch = name.toLowerCase().includes(searchLower) || botName.toLowerCase().includes(searchLower);
+        return matchesForm && matchesSearch;
     });
 
     return (
@@ -49,15 +68,15 @@ const Catalog = () => {
 
                 {/* Filters & Search - Glassmorphic Bar */}
                 <div className="glass-panel p-4 mb-12 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in-up animation-delay-200">
-                    {/* Category Pills */}
+                    {/* Form Pills */}
                     <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
-                        {categories.map(cat => (
+                        {forms.map(form => (
                             <button
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
-                                className={`whitespace-nowrap px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300 ${activeCategory === cat ? 'bg-earth text-white shadow-md' : 'bg-transparent text-earth/60 hover:bg-white/50 hover:text-earth'}`}
+                                key={form}
+                                onClick={() => setActiveForm(form)}
+                                className={`whitespace-nowrap px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300 ${activeForm === form ? 'bg-earth text-white shadow-md' : 'bg-transparent text-earth/60 hover:bg-white/50 hover:text-earth'}`}
                             >
-                                {cat}
+                                {form}
                             </button>
                         ))}
                     </div>
@@ -76,17 +95,28 @@ const Catalog = () => {
                 </div>
 
                 {/* Product Grid */}
+                {loading ? (
+                    <div className="flex items-center justify-center py-20">
+                        <div className="text-earth/60 font-bold">Loading catalogue...</div>
+                    </div>
+                ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    {filteredProducts.map((product, i) => (
+                    {filteredProducts.map((product, i) => {
+                        const productUrl = product._id ? `/product/${product._id}` : '#';
+                        const imageSrc = product.images && product.images.length > 0 ? product.images[0].url : 'https://images.unsplash.com/photo-1596649890656-749e414c7dc9?auto=format&fit=crop&q=80';
+                        // if forms is an array of strings, we use it for tags.
+                        const tags = product.forms || [];
+                        
+                        return (
                         <Link
-                            to={`/product/${product.id}`}
-                            key={product.id}
+                            to={productUrl}
+                            key={product._id || i}
                             className="glass-card group overflow-hidden flex flex-col"
                             style={{ animationDelay: `${i * 100}ms` }}
                         >
                             <div className="relative h-64 overflow-hidden border-b border-white/40">
-                                <img src={product.img} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                {product.tags.map((tag, idx) => (
+                                <img src={imageSrc} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                {tags.map((tag, idx) => (
                                     <div key={idx} className="absolute top-4 right-4 px-3 py-1 bg-white/90 backdrop-blur-md rounded-lg text-xs font-bold text-saffron shadow-sm">
                                         {tag}
                                     </div>
@@ -97,7 +127,7 @@ const Catalog = () => {
                                 <div>
                                     <div className="text-earth/50 text-xs font-bold uppercase tracking-widest mb-2">{product.category}</div>
                                     <h3 className="font-display font-bold text-xl text-earth mb-1">{product.name}</h3>
-                                    <p className="text-earth/60 text-sm italic mb-4">{product.botanical}</p>
+                                    <p className="text-earth/60 text-sm italic mb-4">{product.botanicalName}</p>
                                 </div>
 
                                 <div className="flex items-center text-saffron font-bold text-sm opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
@@ -105,10 +135,11 @@ const Catalog = () => {
                                 </div>
                             </div>
                         </Link>
-                    ))}
+                    )})}
                 </div>
+                )}
 
-                {filteredProducts.length === 0 && (
+                {!loading && filteredProducts.length === 0 && (
                     <div className="text-center py-20">
                         <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-earth/5">
                             <Search className="text-earth/30" size={32} />

@@ -11,10 +11,10 @@ const Home = () => {
     const scrollRef = useRef(null);
 
     const categories = [
-        { name: 'Raw Herbs', tagline: 'Whole dried roots, leaves & bark sourced from natural habitats', img: 'https://images.unsplash.com/photo-1615486171448-4fd186414757?auto=format&fit=crop&q=80', count: '120+', query: 'Raw Herbs' },
-        { name: 'Herbal Powders', tagline: 'Fine-ground Churna & traditional blends for formulations', img: 'https://images.unsplash.com/photo-1596649890656-749e414c7dc9?auto=format&fit=crop&q=80', count: '85+', query: 'Herbal Powders' },
-        { name: 'Extracts', tagline: 'Concentrated active compounds & standardized essences', img: 'https://images.unsplash.com/photo-1608528577891-eb05feca37bf?auto=format&fit=crop&q=80', count: '60+', query: 'Extracts' },
-        { name: 'Oils & Resins', tagline: 'Cold-pressed oils, gum resins & aromatic distillates', img: 'https://images.unsplash.com/photo-1628189855581-2b0ea2a013d5?auto=format&fit=crop&q=80', count: '40+', query: 'Oils & Resins' },
+        { name: 'Raw Herbs', tagline: 'Whole dried roots, leaves & bark sourced from natural habitats', img: 'https://images.unsplash.com/photo-1615486171448-4fd186414757?auto=format&fit=crop&q=80', count: '120+', query: 'Raw' },
+        { name: 'Herbal Powders', tagline: 'Fine-ground Churna & traditional blends for formulations', img: 'https://images.unsplash.com/photo-1596649890656-749e414c7dc9?auto=format&fit=crop&q=80', count: '85+', query: 'Powder' },
+        { name: 'Extracts', tagline: 'Concentrated active compounds & standardized essences', img: 'https://images.unsplash.com/photo-1608528577891-eb05feca37bf?auto=format&fit=crop&q=80', count: '60+', query: 'Extract' },
+        { name: 'Oils & Resins', tagline: 'Cold-pressed oils, gum resins & aromatic distillates', img: 'https://images.unsplash.com/photo-1628189855581-2b0ea2a013d5?auto=format&fit=crop&q=80', count: '40+', query: 'Oil' },
     ];
 
     return (
@@ -136,7 +136,7 @@ const Home = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {/* Large primary category */}
-                        <Link to={`/catalog?category=${categories[0].query}`} className="glass-card group lg:col-span-2 h-[450px] relative overflow-hidden flex flex-col justify-end p-8 border-none pointer-events-auto">
+                        <Link to={`/catalog?form=${categories[0].query}`} className="glass-card group lg:col-span-2 h-[450px] relative overflow-hidden flex flex-col justify-end p-8 border-none pointer-events-auto">
                             <img src={categories[0].img} alt={categories[0].name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
                             <div className="absolute inset-0 bg-gradient-to-t from-earth/90 via-earth/20 to-transparent" />
 
@@ -149,7 +149,7 @@ const Home = () => {
 
                         {/* Smaller categories */}
                         {categories.slice(1).map((cat, i) => (
-                            <Link key={cat.name} to={`/catalog?category=${cat.query}`} className={`glass-card group h-[450px] relative overflow-hidden flex flex-col justify-end p-8 border-none lg:col-span-1 ${i === 1 ? 'md:col-span-2 lg:col-span-1' : ''}`}>
+                            <Link key={cat.name} to={`/catalog?form=${cat.query}`} className={`glass-card group h-[450px] relative overflow-hidden flex flex-col justify-end p-8 border-none lg:col-span-1 ${i === 1 ? 'md:col-span-2 lg:col-span-1' : ''}`}>
                                 <img src={cat.img} alt={cat.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-earth/90 via-earth/30 to-transparent" />
 
