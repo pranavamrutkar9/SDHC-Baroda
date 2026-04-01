@@ -90,6 +90,20 @@ mongoose.connect(MONGO_URI)
         console.log('Connected to MongoDB');
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`);
+
+            // ── Keep-alive (Render free tier) ────────────────────────────────
+            // Render spins down free instances after 15 min of inactivity.
+            // RENDER_EXTERNAL_URL is automatically injected by Render for all services.
+            const selfUrl = process.env.RENDER_EXTERNAL_URL;
+            if (process.env.NODE_ENV === 'production' && selfUrl) {
+                console.log(`Keep-alive: pinging ${selfUrl}/api/health every 14 min`);
+                setInterval(() => {
+                    fetch(`${selfUrl}/api/health`)
+                        .then(() => console.log('[keep-alive] ping ok'))
+                        .catch(err => console.warn('[keep-alive] ping failed:', err.message));
+                }, 14 * 60 * 1000); // 14 minutes
+            }
+            // ─────────────────────────────────────────────────────────────────
         });
     })
     .catch((err) => {

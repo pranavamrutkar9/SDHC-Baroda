@@ -28,18 +28,33 @@ const Catalog = () => {
         }
     }, [location.search]);
 
-    const fetchProducts = async () => {
+    const [retrying, setRetrying] = useState(false);
+
+    const fetchProducts = async (attempt = 1) => {
         try {
             const res = await fetch(`${API_BASE}/products`);
             if (res.ok) {
                 const data = await res.json();
                 setProducts(data);
+            } else if (res.status === 502 && attempt <= 3) {
+                // Server is waking up (Render cold start) — retry after 5s
+                setRetrying(true);
+                setTimeout(() => fetchProducts(attempt + 1), 5000);
+                return;
             }
         } catch (err) {
+            if (attempt <= 3) {
+                // Network error during cold start — retry after 5s
+                setRetrying(true);
+                setTimeout(() => fetchProducts(attempt + 1), 5000);
+                return;
+            }
             console.error(err);
         } finally {
-            setLoading(false);
+            if (attempt > 3) setLoading(false); // only stop loading after all retries
         }
+        setRetrying(false);
+        setLoading(false);
     };
 
     const forms = ['All', 'Raw', 'Powder', 'Extract', 'Oil', 'Capsule', 'Tablet'];
@@ -96,8 +111,11 @@ const Catalog = () => {
 
                 {/* Product Grid */}
                 {loading ? (
-                    <div className="flex items-center justify-center py-20">
-                        <div className="text-earth/60 font-bold">Loading catalogue...</div>
+                    <div className="flex flex-col items-center justify-center py-20 gap-4">
+                        <div className="w-10 h-10 border-4 border-saffron/30 border-t-saffron rounded-full animate-spin" />
+                        <div className="text-earth/60 font-bold text-sm">
+                            {retrying ? '⏳ Server is waking up, please wait...' : 'Loading catalogue...'}
+                        </div>
                     </div>
                 ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
